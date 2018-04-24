@@ -1,0 +1,10 @@
+curl -i -X POST http://localhost:3000/users -H \
+ 'content-type: application/json' \
+  -d '{ 
+      "email": "Borhon.Zork@mongodb.com", 
+      "name": 
+      { 
+          "first": "Borhon", 
+          "last": "Zork" 
+        }
+    }'

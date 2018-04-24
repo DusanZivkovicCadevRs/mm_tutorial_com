@@ -1,11 +1,13 @@
-'use strict'
-
 /**
  * Module Dependencies
  */
-const config  = require('./config'),
-      restify = require('restify'),
-      mongodb = require('mongodb').MongoClient
+const restify = require('restify'),
+      mongoose = require('mongoose')
+
+/**
+ * Config
+ */
+const config = require('./config')
 
 /**
  * Initialize Server
@@ -24,28 +26,40 @@ server.use(restify.queryParser({ mapParams: true }))
 server.use(restify.fullResponse())
 
 /**
- * Lift Server, Connect to DB & Require Route File
+ * Start Server, Connect to DB & Require Route Files
  */
 server.listen(config.port, () => {
 
-    // establish connection to mongodb atlas
-    mongodb.connect(config.db.uri, (err, db) => {
+	/**
+	 * Connect to MongoDB via Mongoose
+	 */
+	const opts = {
+	    promiseLibrary: global.Promise,
+      auto_reconnect: true,
+      reconnectTries: Number.MAX_VALUE,
+      reconnectInterval: 1000,
+      autoIndex: true
+	}
 
-        if (err) {
-            console.log('An error occurred while attempting to connect to MongoDB', err)
-            process.exit(1)
-        }
+	mongoose.Promise = opts.promiseLibrary
+	mongoose.connect(config.db.uri, opts)
 
-        console.log(
-            '%s v%s ready to accept connections on port %s in %s environment.',
-            server.name,
-            config.version,
-            config.port,
-            config.env
-        )
+	const db = mongoose.connection
 
-        require('./routes')({ db, server })
+	db.on('error', (err) => {
+	    if (err.message.code === 'ETIMEDOUT') {
+	        console.log(err)
+	        mongoose.connect(config.db.uri, opts)
+	    }
+	})
 
-    })
+	db.once('open', () => {
+
+		require('./routes/user')(server)
+		require('./routes/todo')(server)
+
+		console.log(`Server is listening on port ${config.port}`)
+
+	})
 
 })
