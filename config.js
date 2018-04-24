@@ -6,6 +6,6 @@ module.exports = {
     env: process.env.NODE_ENV || 'development',
     port: process.env.PORT || 3000,
     db: {
-        uri: 'YOUR_MONGODB_CONNECTION_STRING',
+        uri: 'mongodb://localhost:27017/mongocom_mongoose',
     }
 }
