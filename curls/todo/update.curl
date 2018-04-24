@@ -1,0 +1,3 @@
+curl -i -X PUT http://localhost:3000/users/5adf0998f1cf471d6c6654aa/todos/5adf14b5f1cf471d6c6654ac \
+ -H 'content-type: application/json' \
+ -d '{ "status": "in progress" }'
