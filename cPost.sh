@@ -1,1 +1,8 @@
-curl -H "Content-Type: application/json" -X POST -d '{"name":"Mickay","task":"Get Hubed","status":"pending"}' localhost:3000/todos/
+curl -X POST \
+  http://localhost:3000/todos \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "name": "Okay",
+    "task": "init OK",
+    "status": "pending"
+}'
